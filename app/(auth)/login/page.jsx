@@ -1,4 +1,4 @@
-
+"use client"
 import Link from "next/link";
 
 import {
@@ -12,14 +12,55 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { api, ENDPOINT } from "../../../lib/api"
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { userLoggedInDetail } from "../../../redux/slice/UserSlice"
+import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter()
+  const dispatch = useDispatch()
+
+  const handleLogin = async (e) => {
+    try {
+      e.preventDefault();
+      if (!email || !password) {
+        toast.info("enter email password")
+        return
+      }
+      setLoading(true)
+      const resp = await api.post(ENDPOINT.login, {
+        email: email,
+        password: password
+      })
+      setLoading(false)
+      if (resp.data.status == "success") {
+        dispatch(userLoggedInDetail(resp.data.user))
+        toast.success(`Welcome to Jio CLone`)
+       
+        router.push("/")
+
+      }
+    } catch (err) {
+      toast.error("email or password incorrect")
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#0d0b0b] px-4 py-8 text-white">
 
       <Card className="mx-auto w-full max-w-[460px] gap-0 border border-[#302d2c] bg-[#1c1a19] px-5 py-6 shadow-none sm:px-7">
-
-        {/* Header */}
         <CardHeader className="mb-5 space-y-1 p-0">
           <CardTitle className="text-2xl font-semibold text-white">
             Login
@@ -34,7 +75,7 @@ export default function LoginPage() {
 
           <form className="space-y-4">
 
-            {/* Email */}
+
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-sm font-semibold text-white sm:text-base">
                 Email
@@ -44,11 +85,13 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="h-11 border-[#302d2c] bg-[#0d0b0b] text-sm text-white placeholder:text-[#a5a5a5] focus-visible:border-[#e91e63] focus-visible:ring-[#e91e63]"
               />
             </div>
 
-            {/* Password */}
+
             <div className="space-y-1.5">
               <Label htmlFor="password" className="text-sm font-semibold text-white sm:text-base">
                 Password
@@ -57,32 +100,36 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="h-11 border-[#302d2c] bg-[#0d0b0b] text-sm text-white focus-visible:border-[#e91e63] focus-visible:ring-[#e91e63]"
               />
             </div>
 
-            {/* Submit */}
+
             <Button
+              onClick={handleLogin}
               type="submit"
               className="mt-2 h-11 w-full rounded-lg bg-[#ed174c] text-base font-semibold text-white hover:bg-[#d91443]"
             >
-              Sign in
+              Sign in {loading ? <LoaderCircle className="animate-spin" /> : ""}
             </Button>
 
           </form>
 
-          {/* Footer Links */}
+
           <div className="mt-9 flex flex-wrap items-center justify-between gap-3 text-sm text-white">
 
-            <Link href="/forgot-password" className="hover:text-[#ed174c]">
+            <Link href="/resetPassword" className="hover:text-[#ed174c]">
               Forgot Password?
             </Link>
 
             <p>
               Need an account?{" "}
               <Link
-                href="/signup"
+                href="signup"
                 className="underline underline-offset-2 hover:text-[#ed174c]"
+
               >
                 Sign Up
               </Link>

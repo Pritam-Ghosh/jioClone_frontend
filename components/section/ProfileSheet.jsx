@@ -10,6 +10,8 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const menuItems = [
   { label: "Home", href: "/" },
@@ -20,6 +22,12 @@ const menuItems = [
 ];
 
 export default function ProfileSheet() {
+
+
+
+  const userData = useSelector((state)=>state.user)
+
+
   return (
     <Sheet>
       <SheetTrigger
@@ -52,7 +60,7 @@ export default function ProfileSheet() {
               👨🏽
             </div>
 
-            <h2 className="text-xl font-bold">Guest</h2>
+            <h2 className="text-xl font-bold">{userData.IsLoggedIn ? userData.user.name : "Guest"}</h2>
 
             <Link
               href="/login"
