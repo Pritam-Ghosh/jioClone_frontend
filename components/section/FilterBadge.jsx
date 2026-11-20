@@ -13,7 +13,7 @@ export default function FilterButton({ list }) {
 
         {
           list.map((item, index) => (
-            <Link href={item.herf} key={index}  className="inline-flex items-center rounded-full border border-[#414141] bg-[#303030] px-5 py-2 text-sm font-medium text-white transition-all duration-200 hover:border-[#e6007e] hover:bg-[#e6007e] mx-2">
+            <Link href={item.href} key={index}  className="inline-flex items-center rounded-full border border-[#414141] bg-[#303030] px-5 py-2 text-sm font-medium text-white transition-all duration-200 hover:border-[#e6007e] hover:bg-[#e6007e] mx-2">
               {item.label}
             </Link>
           ))

@@ -1,7 +1,5 @@
 
-"use client";
-
-import Image from "next/image";
+import React, { Suspense } from "react";
 import {
     Carousel,
     CarouselContent,
@@ -9,44 +7,28 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-import {Skeleton} from "../atom/Skeleton"
-import { Suspense } from "react";
+import { Skeleton } from "../atom/Skeleton";
+import Link from "next/link";
 
-const movies = [
-    {
-        id: 1,
-        title: "Transformers",
-        image: "/carousel/transformers.jpg",
-    },
-    {
-        id: 2,
-        title: "Borderlands",
-        image: "/carousel/borderlands.jpg",
-    },
-    {
-        id: 3,
-        title: "Movie Three",
-        image: "/carousel/movie3.jpg",
-    },
-    {
-        id: 4,
-        title: "Movie Four",
-        image: "/carousel/movie4.jpg",
-    },
-];
-
-function BannerSection() {
+// 1. Wrapper component
+async function BannerSection({ fetcher }) {
+    
     return (
-        <>
-        <Suspense fallback={<HeroFallBack/>} >
-        <p>Origianl Movie Data</p>
+        <Suspense fallback={<HeroFallBack />}>
+            <BannerSectionContent fetcher={fetcher} />
         </Suspense>
-        </>
-    )
+    );
 }
 
+// 2. Async component
+async function BannerSectionContent({ fetcher }) {
 
-export default function HeroCarousel({ movies: movieList = movies }) {
+    const movieList = await fetcher();
+
+    if (!movieList || movieList.length === 0) {
+        return <p className="text-white">No movies found.</p>;
+    }
+
     return (
         <section className="w-full overflow-hidden bg-black py-5">
 
@@ -59,23 +41,20 @@ export default function HeroCarousel({ movies: movieList = movies }) {
             >
                 <CarouselContent className="-ml-2 md:-ml-3">
 
-                    {movies.map((movie) => (
+                    {movieList.map((movie) => (
                         <CarouselItem
                             key={movie.id}
                             className="basis-[85%] pl-2 sm:basis-[70%] md:basis-[55%] md:pl-3"
                         >
-                            <div className="relative h-[240px] w-full overflow-hidden rounded-lg sm:h-[350px] md:h-[450px] lg:h-[550px]">
-
-                                <Image
-                                    src={movie.image}
-                                    alt={movie.title}
-                                    fill
-                                    priority={movie.id === 2}
-                                    sizes="(max-width: 640px) 85vw, (max-width: 768px) 70vw, 55vw"
-                                    className="object-cover"
+<Link href={`/movie/watch?id=${movie.id}`}
+                                className="relative block h-[240px] w-full overflow-hidden rounded-lg sm:h-[350px] md:h-[450px] lg:h-[550px]"
+                            >
+                                <img
+                                    src={movie.poster}
+                                    alt={movie.title || "Movie poster"}
+                                    className="h-full w-full object-cover"
                                 />
-
-                            </div>
+                            </Link>
                         </CarouselItem>
                     ))}
 
@@ -96,6 +75,7 @@ export default function HeroCarousel({ movies: movieList = movies }) {
     );
 }
 
+// 3. Skeleton fallback
 function HeroFallBack() {
     return (
         <div className="flex items-center justify-center gap-5">
@@ -103,7 +83,7 @@ function HeroFallBack() {
             <Skeleton className="h-[500px] w-[700px] rounded-lg" />
             <Skeleton className="h-[500px] w-[700px] rounded-lg" />
         </div>
-    )
+    );
 }
 
-
+export default BannerSection;
