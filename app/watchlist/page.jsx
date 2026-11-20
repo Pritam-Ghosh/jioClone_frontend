@@ -1,48 +1,46 @@
-import React from 'react'
-import CategoriesSection from '../../components/section/CategoriesSection'
 
-function page() {
-    const moviesCat = [
-  {
-    id: 1,
-    title: "The Shawshank Redemption",
-    image: "/movies/shawshank.jpg",
-  },
-  {
-    id: 2,
-    title: "The Godfather",
-    image: "/movies/godfather.jpg",
-  },
-  {
-    id: 3,
-    title: "The Godfather Part II",
-    image: "/movies/godfather2.jpg",
-  },
-  {
-    id: 4,
-    title: "Schindler's List",
-    image: "/movies/schindlers-list.jpg",
-  },
-  {
-    id: 5,
-    title: "12 Angry Men",
-    image: "/movies/12-angry-men.jpg",
-  },
-  {
-    id: 6,
-    title: "Spirited Away",
-    image: "/movies/spirited-away.jpg",
-  },
-];
-  return (
-<>
+"use client";
 
-           <CategoriesSection
-        title="Popular Movies"
-        movies={moviesCat}
-      />
-</>
-  )
+import React, { useEffect, useState } from "react";
+import CategoriesSection from "../../components/section/CategoriesSection";
+import { api, ENDPOINT } from "@/lib/api";
+
+function Page() {
+    const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const getWatchlist = async () => {
+            try {
+                const resp = await api.get(ENDPOINT.goWishlist);
+
+                setMovies(resp.data.message || []);
+            } catch (error) {
+                console.log("Watchlist error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getWatchlist();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#0d0b0b] flex items-center justify-center text-white">
+                Loading watchlist...
+            </div>
+        );
+    }
+
+    return (
+        <main className="min-h-screen bg-[#0d0b0b]">
+            <CategoriesSection
+                title="My Watchlist"
+                movies={movies}
+            />
+        </main>
+    );
 }
 
-export default page
+export default Page;

@@ -66,7 +66,7 @@ export default function CategoriesSection({
                   <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-[#252525]">
 
                     {image && (
-                      <Image
+                      <img
                         src={image}
                         alt={movie.title || "Movie poster"}
                         fill

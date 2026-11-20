@@ -4,6 +4,7 @@ import Header from "@/components/atom/Header";
 import Footer from "@/components/atom/Footer";
 import "./globals.css";
 import StoreProvider from "@/provider/StoreProvider"
+import AuthProvider from "@/provider/AuthProvider"
 import { Toaster } from "sonner";
 
 export default function RootLayout({ children }) {
@@ -11,6 +12,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <StoreProvider>
+          <AuthProvider>
+
+          
           <Header />
           <main>
             {children}
@@ -20,6 +24,7 @@ export default function RootLayout({ children }) {
             />
           </main>
           <Footer />
+          </AuthProvider>
         </StoreProvider>
       </body>
     </html>

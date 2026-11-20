@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import WatchListButton from "../../../components/atom/WatchListButton";
 
 export default function MovieDetailPage() {
 
@@ -133,9 +134,7 @@ useEffect(() => {
         }
     };
 
-    const handleWatchlist = () => {
-        console.log("Added to watchlist:", movie.id);
-    };
+
 
     return (
 
@@ -263,13 +262,7 @@ useEffect(() => {
                             Share
                         </Button>
 
-                        <Button
-                            onClick={handleWatchlist}
-                            className="h-10 gap-2 bg-[#303030] text-white hover:bg-[#414141]"
-                        >
-                            <Plus size={17} />
-                            Add to watchlist
-                        </Button>
+<WatchListButton movie={movie} />
 
                     </div>
 
